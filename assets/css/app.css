@@ -87,3 +87,7 @@
   text-decoration: none;
   cursor: pointer;
 }
+
+.logo {
+  font-size: 3rem;
+}
