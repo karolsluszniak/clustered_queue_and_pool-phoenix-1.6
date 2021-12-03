@@ -1,7 +1,7 @@
 <section class="phx-hero">
   <h1>
     <%= if @current_user do %>
-      <%= gettext "Welcome, %{name}!", name: @current_user.name %>
+      <%= gettext "Welcome, %{name}!", name: @current_user.email %>
     <% else %>
       <%= gettext "Welcome!" %>
     <% end %>
