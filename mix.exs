@@ -48,7 +48,10 @@ defmodule Outer.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      # extra deps beyond phoenix defaults
+      {:ex_check, "~> 0.14"},
+      {:phoenix_live_controller, "~> 0.7"}
     ]
   end
 

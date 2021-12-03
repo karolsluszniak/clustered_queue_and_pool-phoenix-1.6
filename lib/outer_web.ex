@@ -59,6 +59,24 @@ defmodule OuterWeb do
     end
   end
 
+  def live_controller do
+    quote do
+      use Phoenix.LiveController,
+        layout: {OuterWeb.LayoutView, "live.html"}
+
+      unquote(view_helpers())
+      unquote(live_controller_global_plugs())
+    end
+  end
+
+  defp live_controller_global_plugs do
+    alias OuterWeb.LiveUserAuth
+
+    quote do
+      plug {LiveUserAuth, :fetch_current_user} when not mounted?(socket)
+    end
+  end
+
   def router do
     quote do
       use Phoenix.Router
