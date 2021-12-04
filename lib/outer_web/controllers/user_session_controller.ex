@@ -10,9 +10,9 @@ defmodule OuterWeb.UserSessionController do
         user = Accounts.get_user!(user_id)
         UserAuth.log_in_user(conn, user)
 
-      {:error, :expired} ->
+      {:error, _} ->
         conn
-        |> put_flash(:error, "Login token expired.")
+        |> put_flash(:error, "Login token is invalid or expired.")
         |> redirect(to: Routes.user_session_path(conn, :new))
     end
   end
