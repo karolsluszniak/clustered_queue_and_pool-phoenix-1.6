@@ -122,7 +122,7 @@ defmodule Outer.Accounts.User do
     user
     |> cast(attrs, [:twitter_handle])
     |> validate_format(:twitter_handle, ~r/^@[a-zA-Z0-9_]+$/,
-      message: "valid profile prefixed by @"
+      message: "must be a valid Twitter profile prefixed by @"
     )
     |> cast_attachments(attrs, [:avatar], allow_paths: true)
   end

@@ -310,6 +310,67 @@ defmodule Outer.AccountsTest do
     end
   end
 
+  describe "change_user_profile/2" do
+    test "returns a user changeset" do
+      assert %Ecto.Changeset{} = Accounts.change_user_profile(%User{})
+    end
+
+    test "allows fields to be set" do
+      changeset =
+        Accounts.change_user_profile(%User{}, %{
+          "twitter_handle" => "@user"
+        })
+
+      assert changeset.valid?
+      assert get_change(changeset, :twitter_handle) == "@user"
+    end
+  end
+
+  describe "update_user_profile/2" do
+    setup do
+      %{user: user_fixture()}
+    end
+
+    test "validates Twitter handle", %{user: user} do
+      {:error, changeset} =
+        Accounts.update_user_profile(user, %{
+          twitter_handle: "bad"
+        })
+
+      assert %{
+               twitter_handle: ["must be a valid Twitter profile prefixed by @"]
+             } = errors_on(changeset)
+    end
+
+    test "updates the Twitter handle", %{user: user} do
+      {:ok, user} =
+        Accounts.update_user_profile(user, %{
+          twitter_handle: "@user"
+        })
+
+      assert user.twitter_handle == "@user"
+
+      user = Accounts.get_user_by_email(user.email)
+
+      assert user.twitter_handle == "@user"
+    end
+
+    test "updates the avatar image", %{user: user} do
+      refute Accounts.UserAvatar.url({user.avatar, user}, :thumb)
+
+      {:ok, user} =
+        Accounts.update_user_profile(user, %{
+          avatar: valid_user_avatar_path()
+        })
+
+      assert "/uploads/avatar-thumb.jpg?v=" <> _ =
+               Accounts.UserAvatar.url({user.avatar, user}, :thumb)
+
+      assert File.lstat!("priv/uploads/avatar-original.jpg").size >
+               File.lstat!("priv/uploads/avatar-thumb.jpg").size
+    end
+  end
+
   describe "generate_user_session_token/1" do
     setup do
       %{user: user_fixture()}

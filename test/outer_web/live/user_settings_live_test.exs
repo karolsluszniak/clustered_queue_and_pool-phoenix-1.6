@@ -1,5 +1,6 @@
 defmodule OuterWeb.UserSettingsLiveTest do
   use OuterWeb.ConnCase, async: true
+  alias Outer.Accounts
 
   import Outer.AccountsFixtures
 
@@ -87,6 +88,74 @@ defmodule OuterWeb.UserSettingsLiveTest do
       assert html =~ "<h1>Settings</h1>"
       assert html =~ "must have the @ sign and no spaces"
       assert html =~ "is not valid"
+    end
+
+    @tag :capture_log
+    test "updates the user profile", %{conn: conn, user: user} do
+      {:ok, view, _} = live(conn, Routes.user_settings_path(conn, :edit))
+
+      path = Routes.user_settings_path(conn, :edit)
+
+      avatar =
+        file_input(view, "#update_profile", :avatar, [
+          %{
+            last_modified: 1_594_171_879_000,
+            name: "avatar.jpg",
+            content: File.read!(valid_user_avatar_path()),
+            size: File.lstat!(valid_user_avatar_path()).size,
+            type: "image/jpeg"
+          }
+        ])
+
+      assert render_upload(avatar, "avatar.jpg") =~ ~S(<img class="avatar")
+
+      user = Accounts.get_user_by_email(user.email)
+
+      refute user.twitter_handle
+      refute user.avatar
+
+      assert {:error, {:redirect, %{to: ^path}}} =
+               view
+               |> element("form#update_profile")
+               |> render_submit(%{
+                 "user" => %{"twitter_handle" => "@user"}
+               })
+
+      user = Accounts.get_user_by_email(user.email)
+
+      assert user.twitter_handle
+      assert user.avatar
+    end
+
+    test "does not update profile on invalid Twitter handle", %{conn: conn} do
+      {:ok, view, _} = live(conn, Routes.user_settings_path(conn, :edit))
+
+      assert html =
+               view
+               |> element("form#update_profile")
+               |> render_submit(%{
+                 "user" => %{"twitter_handle" => "invalid"}
+               })
+
+      assert html =~ "<h1>Settings</h1>"
+      assert html =~ "must be a valid Twitter profile prefixed by @"
+    end
+
+    test "does not update profile on invalid avatar", %{conn: conn} do
+      {:ok, view, _} = live(conn, Routes.user_settings_path(conn, :edit))
+
+      avatar =
+        file_input(view, "#update_profile", :avatar, [
+          %{
+            last_modified: 1_594_171_879_000,
+            name: "avatar.jpg",
+            content: File.read!(valid_user_avatar_path()),
+            size: 10_000_000,
+            type: "image/jpeg"
+          }
+        ])
+
+      assert {:error, [[_, :too_large]]} = render_upload(avatar, "avatar.jpg")
     end
   end
 end

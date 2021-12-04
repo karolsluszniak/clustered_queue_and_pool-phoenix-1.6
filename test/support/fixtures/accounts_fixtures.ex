@@ -6,6 +6,7 @@ defmodule Outer.AccountsFixtures do
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
   def valid_user_password, do: "hello world!"
+  def valid_user_avatar_path, do: __ENV__.file |> Path.rootname() |> Path.join("avatar.jpg")
 
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
