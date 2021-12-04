@@ -13,7 +13,7 @@ defmodule OuterWeb.LiveUserAuth do
   Logs the user in.
 
   As a live view cannot modify session, this function safely redirects to HTTP endpoint which can.
-  In the end, the `OuterWeb.UserAuth.log_in_user/3` function is invoked.
+  In the end, the `OuterWeb.UserAuth.log_in_user/2` function is invoked.
   """
   def log_in_user(socket, user) do
     token = LoginToken.sign(user.id)
