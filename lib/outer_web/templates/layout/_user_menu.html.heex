@@ -1,7 +1,9 @@
 <ul>
 <%= if @current_user do %>
   <li>
-    <%= img_tag Outer.Accounts.UserAvatar.url({@current_user.avatar, @current_user}, :thumb), class: "avatar" %>
+    <%= if @current_user.avatar do %>
+      <%= img_tag Outer.Accounts.UserAvatar.url({@current_user.avatar, @current_user}, :thumb), class: "avatar" %>
+    <% end %>
     <%= @current_user.email %>
   </li>
   <li><%= live_redirect "Settings", to: Routes.user_settings_path(@conn, :edit) %></li>

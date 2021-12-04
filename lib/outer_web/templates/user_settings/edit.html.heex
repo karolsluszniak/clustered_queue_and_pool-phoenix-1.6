@@ -14,6 +14,17 @@
   <%= error_tag f, :twitter_handle %>
 
   <%= label f, :avatar %>
+  <%= cond do %>
+    <% entry = List.first(@uploads.avatar.entries) -> %>
+      <%= live_img_preview entry, class: "avatar" %>
+
+    <% @current_user.avatar -> %>
+      <%= img_tag Outer.Accounts.UserAvatar.url({@current_user.avatar, @current_user}, :thumb), class: "avatar" %>
+
+    <% true -> %>
+
+  <% end %>
+
   <%= live_file_input @uploads.avatar %>
   <%= error_tag f, :avatar %>
 
