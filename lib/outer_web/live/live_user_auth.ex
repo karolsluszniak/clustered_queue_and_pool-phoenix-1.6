@@ -38,6 +38,31 @@ defmodule OuterWeb.LiveUserAuth do
   end
 
   @doc """
+  Used for mounts and event handlers that require the user to be authenticated.
+
+      def handle_event("save", params, socket) do
+        socket =
+          with %{redirected: nil} <- require_authenticated_user(socket) do
+            # ...
+          end
+
+        {:noreply, socket}
+      end
+
+  """
+  def require_authenticated_user(socket) do
+    socket = fetch_current_user(socket)
+
+    if socket.assigns.current_user do
+      socket
+    else
+      socket
+      |> put_flash(:error, "You must sign in to perform this action.")
+      |> push_redirect(to: Routes.user_session_path(socket, :new))
+    end
+  end
+
+  @doc """
   Used for mounts and event handlers that require the user to not be authenticated.
 
       def handle_event("save", params, socket) do
