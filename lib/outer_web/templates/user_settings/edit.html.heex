@@ -13,20 +13,27 @@
   <%= text_input f, :twitter_handle, placeholder: "@MyProfile" %>
   <%= error_tag f, :twitter_handle %>
 
+  <% avatar_entry = List.first(@uploads.avatar.entries) %>
   <%= label f, :avatar %>
+
   <%= cond do %>
-    <% entry = List.first(@uploads.avatar.entries) -> %>
-      <%= live_img_preview entry, class: "avatar" %>
+    <% avatar_entry -> %>
+      <%= live_img_preview avatar_entry, class: "avatar" %>
 
     <% @current_user.avatar -> %>
       <%= img_tag Outer.Accounts.UserAvatar.url({@current_user.avatar, @current_user}, :thumb), class: "avatar" %>
 
     <% true -> %>
-
   <% end %>
 
   <%= live_file_input @uploads.avatar %>
   <%= error_tag f, :avatar %>
+
+  <%= if avatar_entry do %>
+    <%= for err <- upload_errors(@uploads.avatar, avatar_entry) do %>
+      <span class="invalid-feedback"><%= avatar_error_to_string(err) %></span>
+    <% end %>
+  <% end %>
 
   <div>
     <%= submit "Change profile" %>
