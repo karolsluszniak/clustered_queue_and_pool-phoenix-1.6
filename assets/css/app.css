@@ -91,3 +91,9 @@
 .logo {
   font-size: 3rem;
 }
+.avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  vertical-align: middle;
+}

@@ -20,17 +20,31 @@ defmodule OuterWeb.UserSettingsLive do
   @event_handler true
   def update_profile(socket, %{"user" => user_params}) do
     user = socket.assigns.current_user
-    avatar_path = consume_uploaded_entries(socket, :avatar, fn %{path: path}, _entry -> path end) |> List.first()
 
-    IO.inspect({:avatar_path, avatar_path})
+    avatar_path =
+      consume_uploaded_entries(socket, :avatar, fn %{path: path}, %{client_name: name} ->
+        id = 16 |> :crypto.strong_rand_bytes() |> Base.url_encode64(padding: false)
+        extension = Path.extname(name)
+        final_path = Path.join([System.tmp_dir(), id <> extension])
+        File.cp!(path, final_path)
+        final_path
+      end)
+      |> List.first()
+
+    user_params =
+      if avatar_path, do: Map.put(user_params, "avatar", avatar_path), else: user_params
 
     case Accounts.update_user_profile(user, user_params) do
       {:ok, _user} ->
+        if avatar_path, do: File.rm(avatar_path)
+
         socket
         |> put_flash(:info, "Profile updated successfully.")
         |> push_redirect(to: Routes.user_settings_path(socket, :edit))
 
       {:error, changeset} ->
+        if avatar_path, do: File.rm(avatar_path)
+
         assign(socket, profile_changeset: changeset)
     end
   end

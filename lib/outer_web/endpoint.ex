@@ -22,6 +22,13 @@ defmodule OuterWeb.Endpoint do
     gzip: false,
     only: ~w(assets fonts images favicon.ico robots.txt)
 
+  if Mix.env() in [:dev, :test] do
+    plug Plug.Static,
+      at: "/uploads",
+      from: Path.expand("./priv/uploads"),
+      gzip: false
+  end
+
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do

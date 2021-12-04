@@ -52,7 +52,13 @@ defmodule Outer.MixProject do
       {:plug_cowboy, "~> 2.5"},
       # extra deps beyond phoenix defaults
       {:ex_check, "~> 0.14"},
-      {:phoenix_live_controller, "~> 0.7"}
+      {:phoenix_live_controller, "~> 0.7"},
+      {:waffle, "~> 1.1"},
+      {:waffle_ecto, "~> 0.0"},
+      {:ex_aws, "~> 2.2"},
+      {:ex_aws_s3, "~> 2.3"},
+      {:hackney, "~> 1.18"},
+      {:sweet_xml, "~> 0.7"}
     ]
   end
 

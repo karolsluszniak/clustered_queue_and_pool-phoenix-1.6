@@ -1,6 +1,8 @@
 defmodule Outer.Accounts.User do
   use Ecto.Schema
+  use Waffle.Ecto.Schema
   import Ecto.Changeset
+  alias Outer.Accounts.UserAvatar
 
   schema "users" do
     field :email, :string
@@ -8,6 +10,7 @@ defmodule Outer.Accounts.User do
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
     field :twitter_handle, :string
+    field :avatar, UserAvatar.Type
 
     timestamps()
   end
@@ -121,6 +124,7 @@ defmodule Outer.Accounts.User do
     |> validate_format(:twitter_handle, ~r/^@[a-zA-Z0-9_]+$/,
       message: "valid profile prefixed by @"
     )
+    |> cast_attachments(attrs, [:avatar], allow_paths: true)
   end
 
   @doc """
