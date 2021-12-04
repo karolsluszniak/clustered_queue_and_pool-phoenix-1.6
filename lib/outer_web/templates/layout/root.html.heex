@@ -15,7 +15,7 @@
         <nav>
           <%= render "_user_menu.html", assigns %>
         </nav>
-        <%= link "Outer", to: Routes.page_path(@conn, :index), class: "logo" %>
+        <%= live_redirect "Outer", to: Routes.page_path(@conn, :index), class: "logo" %>
       </section>
     </header>
     <%= @inner_content %>

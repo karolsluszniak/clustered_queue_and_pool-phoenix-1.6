@@ -1,6 +1,6 @@
 <h1>Log in</h1>
 
-<.form let={f} for={@conn} action={Routes.user_session_path(@conn, :create)} as={:user}>
+<.form let={f} for={:user} phx-submit="create" as={:user}>
   <%= if @error_message do %>
     <div class="alert alert-danger">
       <p><%= @error_message %></p>
@@ -22,6 +22,6 @@
 </.form>
 
 <p>
-  <%= link "Register", to: Routes.user_registration_path(@conn, :new) %> |
-  <%= link "Forgot your password?", to: Routes.user_reset_password_path(@conn, :new) %>
+  <%= link "Register", to: Routes.user_registration_path(@socket, :new) %> |
+  <%= link "Forgot your password?", to: Routes.user_reset_password_path(@socket, :new) %>
 </p>

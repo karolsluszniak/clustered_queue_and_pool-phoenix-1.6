@@ -62,8 +62,8 @@ defmodule OuterWeb.Router do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 
     live "/users/register", UserRegistrationLive, :new
-    get "/users/log_in", UserSessionController, :new
-    post "/users/log_in", UserSessionController, :create
+    live "/users/log_in", UserSessionLive, :new
+    get "/users/log_in/complete", UserSessionController, :create
     get "/users/reset_password", UserResetPasswordController, :new
     post "/users/reset_password", UserResetPasswordController, :create
     get "/users/reset_password/:token", UserResetPasswordController, :edit
