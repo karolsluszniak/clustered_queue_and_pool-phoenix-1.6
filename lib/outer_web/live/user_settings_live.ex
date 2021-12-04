@@ -9,12 +9,20 @@ defmodule OuterWeb.UserSettingsLive do
 
   @action_handler true
   def edit(socket, _params) do
+    allow_upload(socket, :avatar, accept: ~w(.jpg .jpeg), max_file_size: 500_000)
+  end
+
+  @event_handler true
+  def validate_profile(socket, %{"user" => _user_params}) do
     socket
   end
 
   @event_handler true
   def update_profile(socket, %{"user" => user_params}) do
     user = socket.assigns.current_user
+    avatar_path = consume_uploaded_entries(socket, :avatar, fn %{path: path}, _entry -> path end) |> List.first()
+
+    IO.inspect({:avatar_path, avatar_path})
 
     case Accounts.update_user_profile(user, user_params) do
       {:ok, _user} ->
