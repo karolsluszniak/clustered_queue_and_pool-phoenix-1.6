@@ -13,6 +13,21 @@ defmodule OuterWeb.UserSettingsLive do
   end
 
   @event_handler true
+  def update_profile(socket, %{"user" => user_params}) do
+    user = socket.assigns.current_user
+
+    case Accounts.update_user_profile(user, user_params) do
+      {:ok, _user} ->
+        socket
+        |> put_flash(:info, "Profile updated successfully.")
+        |> push_redirect(to: Routes.user_settings_path(socket, :edit))
+
+      {:error, changeset} ->
+        assign(socket, profile_changeset: changeset)
+    end
+  end
+
+  @event_handler true
   def update_email(socket, params) do
     %{"current_password" => password, "user" => user_params} = params
     user = socket.assigns.current_user
@@ -57,6 +72,7 @@ defmodule OuterWeb.UserSettingsLive do
     user = socket.assigns.current_user
 
     socket
+    |> assign(:profile_changeset, Accounts.change_user_profile(user))
     |> assign(:email_changeset, Accounts.change_user_email(user))
     |> assign(:password_changeset, Accounts.change_user_password(user))
   end

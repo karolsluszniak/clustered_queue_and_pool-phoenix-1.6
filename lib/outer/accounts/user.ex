@@ -7,6 +7,7 @@ defmodule Outer.Accounts.User do
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
+    field :twitter_handle, :string
 
     timestamps()
   end
@@ -109,6 +110,17 @@ defmodule Outer.Accounts.User do
   def confirm_changeset(user) do
     now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
     change(user, confirmed_at: now)
+  end
+
+  @doc """
+  A user changeset for changing the profile information.
+  """
+  def profile_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:twitter_handle])
+    |> validate_format(:twitter_handle, ~r/^@[a-zA-Z0-9_]+$/,
+      message: "valid profile prefixed by @"
+    )
   end
 
   @doc """
