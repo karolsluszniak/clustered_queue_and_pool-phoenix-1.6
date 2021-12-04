@@ -8,7 +8,7 @@ To start the server:
 
 To start with S3 uploads enabled:
 
-  * Authorize with `export AWS_ACCESS_KEY_ID=x AWS_SECRET_ACCESS_KEY=x AWS_REGION=x AWS_S3_BUCKET=x`
+  * Authorize with `export AWS_ACCESS_KEY_ID= AWS_SECRET_ACCESS_KEY= AWS_S3_BUCKET=`
   * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
