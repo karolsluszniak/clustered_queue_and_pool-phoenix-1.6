@@ -71,3 +71,38 @@ if config_env() == :prod do
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
+
+# Configure S3 uploads
+
+aws_access_key_id = System.get_env("AWS_ACCESS_KEY_ID")
+aws_secret_access_key = System.get_env("AWS_SECRET_ACCESS_KEY")
+aws_s3_bucket = System.get_env("AWS_S3_BUCKET")
+
+cond do
+  aws_access_key_id && aws_secret_access_key && aws_s3_bucket ->
+    aws_region = System.get_env("AWS_REGION", "us-east-1")
+
+    config :waffle,
+      storage: Waffle.Storage.S3,
+      bucket: aws_s3_bucket
+
+    config :ex_aws,
+      access_key_id: aws_access_key_id,
+      secret_access_key: aws_secret_access_key,
+      region: aws_region
+
+  aws_access_key_id || aws_secret_access_key || aws_s3_bucket ->
+    raise """
+    environment variables AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY + AWS_S3_BUCKET
+    must be all set together (currently some are provided while others are missing).
+    """
+
+  config_env() == :prod ->
+    raise """
+    environment variables AWS_ACCESS_KEY_ID + AWS_SECRET_ACCESS_KEY + AWS_S3_BUCKET
+    are missing (local uploads are not supported for prod).
+    """
+
+  true ->
+    :ok
+end

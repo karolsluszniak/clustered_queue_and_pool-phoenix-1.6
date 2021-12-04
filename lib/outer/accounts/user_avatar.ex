@@ -15,4 +15,6 @@ defmodule Outer.Accounts.UserAvatar do
   def s3_object_headers(_version, {file, _scope}) do
     [content_type: MIME.from_path(file.file_name)]
   end
+
+  def acl(:thumb, _), do: :public_read
 end
