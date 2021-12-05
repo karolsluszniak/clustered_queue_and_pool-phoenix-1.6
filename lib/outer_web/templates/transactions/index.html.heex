@@ -1,0 +1,35 @@
+<h1>Transactions</h1>
+
+<h2>Wallets</h2>
+
+<table>
+  <tr>
+    <th>Auth token</th>
+    <th>Balance</th>
+    <th>Occupied</th>
+  </tr>
+
+  <%= for {_pid, wallet, occupied} <- @wallets do %>
+    <% class = if occupied, do: "occupied", else: "not-occupied" %>
+
+    <tr class={class}>
+      <td><%= wallet.auth_token %></td>
+      <td><%= wallet.balance || "?" %></td>
+      <td><%= if occupied, do: "YES", else: "NO" %></td>
+    </tr>
+  <% end %>
+</table>
+
+<h2>Enqueue</h2>
+
+<p><strong>Current queue count:</strong> <%= @pending_transactions_count %></p>
+
+<.form let={f} for={:operation} phx-submit={:enqueue}>
+  <%= label f, :amount %>
+  <%= number_input f, :amount, required: true, value: 10 %>
+
+  <%= label f, :transaction_count %>
+  <%= number_input f, :transaction_count, required: true, value: 100 %>
+
+  <%= submit "Start working" %>
+</.form>

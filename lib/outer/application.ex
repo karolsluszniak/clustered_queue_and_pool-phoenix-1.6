@@ -7,6 +7,8 @@ defmodule Outer.Application do
 
   @impl true
   def start(_type, _args) do
+    transactions_config = Application.get_env(:outer, Outer.Transactions)
+
     children = [
       # Start the Ecto repository
       Outer.Repo,
@@ -15,7 +17,10 @@ defmodule Outer.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Outer.PubSub},
       # Start the Endpoint (http/https)
-      OuterWeb.Endpoint
+      OuterWeb.Endpoint,
+      # Start the Transactions system
+      {DynamicSupervisor, strategy: :one_for_one, name: Outer.Transactions.WalletSupervisor},
+      {Outer.Transactions.Queue, transactions_config}
       # Start a worker by calling: Outer.Worker.start_link(arg)
       # {Outer.Worker, arg}
     ]

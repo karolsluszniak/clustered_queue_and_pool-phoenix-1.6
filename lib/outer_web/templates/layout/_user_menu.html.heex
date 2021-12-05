@@ -6,6 +6,7 @@
     <% end %>
     <%= @current_user.email %>
   </li>
+  <li><%= live_redirect "Transactions", to: Routes.transactions_path(@conn, :index) %></li>
   <li><%= live_redirect "Settings", to: Routes.user_settings_path(@conn, :edit) %></li>
   <li><%= link "Log out", to: Routes.user_session_path(@conn, :delete), method: :delete %></li>
 <% else %>

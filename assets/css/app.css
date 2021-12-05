@@ -97,3 +97,9 @@
   border-radius: 50%;
   vertical-align: middle;
 }
+.occupied {
+  background: #fdf;
+}
+.not-occupied {
+  background: #dfd;
+}
