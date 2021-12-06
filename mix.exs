@@ -58,7 +58,8 @@ defmodule Outer.MixProject do
       {:ex_aws, "~> 2.2"},
       {:ex_aws_s3, "~> 2.3"},
       {:hackney, "~> 1.18"},
-      {:sweet_xml, "~> 0.7"}
+      {:sweet_xml, "~> 0.7"},
+      {:libcluster, ">= 0.0.0"},
     ]
   end
 

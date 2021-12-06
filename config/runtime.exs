@@ -71,7 +71,37 @@ unless is_nil(server) do
   config :outer, OuterWeb.Endpoint, server: server && System.get_env("WEB", "1") == "1"
 end
 
-# Configure S3 uploads
+# Clustering
+
+if server && System.get_env("CLUSTER", "1") == "1" do
+  if fly_app do
+    config :libcluster,
+      topologies: [
+        fly6pn: [
+          strategy: Cluster.Strategy.DNSPoll,
+          config: [
+            polling_interval: 5_000,
+            query: "#{fly_app}.internal",
+            node_basename: fly_app
+          ]
+        ]
+      ]
+  else
+    # Configure localhost clustering
+    #   PORT=4000 SERVER=1 iex --sname a -S mix
+    #   PORT=4001 SERVER=1 iex --sname b -S mix
+    config :libcluster,
+      topologies: [
+        local: [
+          strategy: Cluster.Strategy.Gossip
+        ]
+      ]
+  end
+else
+  config :heyplay, :server_id, "local"
+end
+
+# S3 uploads
 
 aws_access_key_id = System.get_env("AWS_ACCESS_KEY_ID")
 aws_secret_access_key = System.get_env("AWS_SECRET_ACCESS_KEY")

@@ -1,11 +1,11 @@
 defmodule Outer.Transactions do
-  alias __MODULE__.Queue
+  alias __MODULE__.Manager
 
   def make_transaction(transaction) do
-    Queue.make_transaction(transaction)
+    Manager.make_transaction(transaction)
   end
 
   def get_queue_state do
-    Queue.get_state()
+    Manager.get_state()
   end
 end

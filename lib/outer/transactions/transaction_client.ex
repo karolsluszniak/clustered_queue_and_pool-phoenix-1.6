@@ -5,7 +5,7 @@ defmodule Outer.Transactions.TransactionClient do
   def ensure_wallet_balance(wallet), do: wallet
 
   defp fetch_wallet_balance(wallet) do
-    fake_remote_call(wallet)
+    fake_remote_call(20..100)
     balance = round(100 + :rand.uniform() * 50)
     wallet = Map.put(wallet, :balance, balance)
     Logger.debug("fetched balance for wallet #{wallet.auth_token} (balance: #{balance})")
@@ -13,7 +13,7 @@ defmodule Outer.Transactions.TransactionClient do
   end
 
   def make_transaction(wallet, transaction) do
-    fake_remote_call(wallet)
+    fake_remote_call(1_000..10_000)
     wallet = Map.update!(wallet, :balance, &(&1 - transaction.amount))
 
     Logger.debug(
@@ -29,7 +29,7 @@ defmodule Outer.Transactions.TransactionClient do
   def ensure_wallet_funds(wallet, _amount), do: wallet
 
   def top_up_wallet(wallet, amount) do
-    fake_remote_call(wallet)
+    fake_remote_call(200..1_000)
     wallet = Map.update!(wallet, :balance, &(&1 + amount))
 
     Logger.debug(
@@ -39,8 +39,8 @@ defmodule Outer.Transactions.TransactionClient do
     wallet
   end
 
-  defp fake_remote_call(_wallet) do
-    (20 + :rand.uniform() * 10)
+  defp fake_remote_call(min..max) do
+    (min + :rand.uniform() * (max - min))
     |> round()
     |> Process.sleep()
   end
