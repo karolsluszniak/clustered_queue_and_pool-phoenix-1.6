@@ -60,6 +60,7 @@ defmodule Outer.MixProject do
       {:hackney, "~> 1.18"},
       {:sweet_xml, "~> 0.7"},
       {:libcluster, ">= 0.0.0"},
+      {:oban, "~> 2.1"},
     ]
   end
 

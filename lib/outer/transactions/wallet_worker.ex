@@ -28,7 +28,7 @@ defmodule Outer.Transactions.WalletWorker do
       |> TransactionClient.ensure_wallet_funds(transaction.amount)
       |> TransactionClient.make_transaction(transaction)
 
-    send(Outer.Transactions.Manager, {:release_wallet, self(), wallet})
+    send(Outer.Transactions.WalletManager, {:release_wallet, self(), wallet})
     GenServer.reply(from, :ok)
 
     {:noreply, wallet}

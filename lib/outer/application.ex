@@ -7,9 +7,9 @@ defmodule Outer.Application do
 
   @impl true
   def start(_type, _args) do
-    transactions_config = Application.get_env(:outer, Outer.Transactions)
-
-    topologies = Application.get_env(:libcluster, :topologies) || []
+    oban_config = Application.fetch_env!(:outer, Oban)
+    transactions_config = Application.fetch_env!(:outer, Outer.Transactions)
+    topologies = Application.fetch_env!(:libcluster, :topologies) || []
 
     children = [
       # Start the Ecto repository
@@ -22,9 +22,11 @@ defmodule Outer.Application do
       OuterWeb.Endpoint,
       # Start the Transactions system
       {DynamicSupervisor, strategy: :one_for_one, name: Outer.Transactions.WalletSupervisor},
-      {Outer.Transactions.Manager, transactions_config},
+      {Outer.Transactions.WalletManager, transactions_config},
       # Start clustering
       {Cluster.Supervisor, [topologies, [name: Outer.ClusterSupervisor]]},
+      # Start background jobs
+      {Oban, oban_config}
       # Start a worker by calling: Outer.Worker.start_link(arg)
       # {Outer.Worker, arg}
     ]

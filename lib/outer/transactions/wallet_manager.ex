@@ -1,4 +1,4 @@
-defmodule Outer.Transactions.Manager do
+defmodule Outer.Transactions.WalletManager do
   use GenServer
   require Logger
   alias Outer.Transactions.Wallet
@@ -45,7 +45,7 @@ defmodule Outer.Transactions.Manager do
           Map.put(state, :wallets, wallets)
 
         :error ->
-          Map.update!(state, :pending_transactions, &(&1 ++ [transaction]))
+          Map.update!(state, :pending_transactions, &(&1 ++ [{transaction, from}]))
       end
 
     {:noreply, state}
@@ -113,11 +113,11 @@ defmodule Outer.Transactions.Manager do
   end
 
   defp make_next_pending_transaction(
-         state = %{pending_transactions: [transaction | remaining_transactions], wallets: wallets}
+         state = %{pending_transactions: [{transaction, from} | remaining_transactions], wallets: wallets}
        ) do
     case claim_wallet(wallets) do
       {:ok, {pid, _wallet}, wallets} ->
-        GenServer.cast(pid, {:make_transaction, transaction})
+        GenServer.cast(pid, {:make_transaction, transaction, from})
 
         state
         |> Map.put(:wallets, wallets)

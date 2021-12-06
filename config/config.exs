@@ -57,6 +57,9 @@ config :ex_aws,
 
 config :outer, Outer.Transactions, wallet_auth_tokens: ~w[w1 w2 w3 w4 w5]
 
+config :outer, Oban,
+  repo: Outer.Repo
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

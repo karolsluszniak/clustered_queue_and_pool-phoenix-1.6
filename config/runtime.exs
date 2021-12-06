@@ -97,8 +97,20 @@ if server && System.get_env("CLUSTER", "1") == "1" do
         ]
       ]
   end
+end
+
+# Workers
+
+unless is_nil(server) && System.get_env("WORKERS", "1") == "1" do
+  config :outer, Oban,
+    queues: [
+      transactions: 50
+    ]
 else
-  config :heyplay, :server_id, "local"
+  config :outer, Oban,
+    crontab: false,
+    queues: false,
+    plugins: false
 end
 
 # S3 uploads
