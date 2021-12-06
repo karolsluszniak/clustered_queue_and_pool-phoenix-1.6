@@ -10,8 +10,9 @@ import Config
 # which you should run after static files are built and
 # before starting your production server.
 config :outer, OuterWeb.Endpoint,
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+  http: [port: 5000, transport_options: [socket_opts: [:inet6]]],
+  cache_static_manifest: "priv/static/cache_manifest.json",
+  secret_key_base: nil
 
 # Do not print debug messages in production
 config :logger, level: :info

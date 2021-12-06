@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+
+  app:
+    build: .
+    command: bin/outer start
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - PORT=4000
+      - SECRET_KEY_BASE=7YrWA1SwInJboP24P5kd4/LoWkca78bT3MxKJA5Rs37zMk+ITBxDnrFWPhGCHiZc
+      - SERVER=1
