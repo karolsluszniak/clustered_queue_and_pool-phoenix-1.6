@@ -4,23 +4,26 @@ defmodule OuterWeb.TransactionsLive do
 
   @action_handler true
   def index(socket, _params) do
-    Process.send_after(self(), :update_queue_state, 100)
-    update_queue_state(socket)
+    do_update_queue_state(socket)
   end
 
   @message_handler true
   def update_queue_state(socket, _payload) do
-    Process.send_after(self(), :update_queue_state, 100)
-    update_queue_state(socket)
+    do_update_queue_state(socket)
   end
 
-  defp update_queue_state(socket) do
-    queue_state = Transactions.get_queue_state()
-    wallets = queue_state.wallets
+  defp do_update_queue_state(socket) do
+    Process.send_after(self(), :update_queue_state, 100)
+
+    wallet_manager_state = Transactions.get_wallet_manager_state()
+    all_wallet_count = length(wallet_manager_state.wallet_auth_tokens)
+    node_wallet_count = length(wallet_manager_state.wallets)
+    manager_pending_transaction_count = length(wallet_manager_state.pending_transactions)
 
     assign(socket,
-      wallets: wallets,
-      pending_transactions_count: length(queue_state.pending_transactions)
+      all_wallet_count: all_wallet_count,
+      node_wallet_count: node_wallet_count,
+      manager_pending_transaction_count: manager_pending_transaction_count
     )
   end
 
@@ -32,7 +35,7 @@ defmodule OuterWeb.TransactionsLive do
     transaction_count = String.to_integer(transaction_count)
 
     for _ <- 1..transaction_count do
-      Transactions.make_transaction(%Transaction{amount: amount})
+      Transactions.enqueue_transaction(%Transaction{amount: amount})
     end
 
     socket

@@ -55,7 +55,8 @@ config :waffle,
 config :ex_aws,
   json_codec: Jason
 
-config :outer, Outer.Transactions, wallet_auth_tokens: ~w[w1 w2 w3 w4 w5]
+config :outer, Outer.Transactions,
+  wallet_auth_tokens: (1..1000 |> Enum.map(fn i -> "w#{i}" end))
 
 config :outer, Oban,
   repo: Outer.Repo

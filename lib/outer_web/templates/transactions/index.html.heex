@@ -1,28 +1,12 @@
 <h1>Transactions</h1>
 
-<h2>Wallets</h2>
-
-<table>
-  <tr>
-    <th>Auth token</th>
-    <th>Balance</th>
-    <th>Occupied</th>
-  </tr>
-
-  <%= for {_pid, wallet, occupied} <- @wallets do %>
-    <% class = if occupied, do: "occupied", else: "not-occupied" %>
-
-    <tr class={class}>
-      <td><%= wallet.auth_token %></td>
-      <td><%= wallet.balance || "?" %></td>
-      <td><%= if occupied, do: "YES", else: "NO" %></td>
-    </tr>
-  <% end %>
-</table>
+<ul>
+  <li>Node wallets: <%= @node_wallet_count %></li>
+  <li>All wallets: <%= @all_wallet_count %></li>
+  <li>Wallet manager queue: <%= @manager_pending_transaction_count %></li>
+</ul>
 
 <h2>Enqueue</h2>
-
-<p><strong>Current queue count:</strong> <%= @pending_transactions_count %></p>
 
 <.form let={f} for={:operation} phx-submit={:enqueue}>
   <%= label f, :amount %>
