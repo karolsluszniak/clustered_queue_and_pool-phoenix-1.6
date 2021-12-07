@@ -67,9 +67,24 @@ defmodule Outer.Transactions.WalletManager do
   # particular node within an Erlang cluster. It does so by chunking wallet configs among all
   # nodes, picking its own chunk and taking a look at what wallet workers are already running
   # - starting new ones or terminating old ones to achieve the final wallet pool.
-  defp sync_wallet_workers(state = %{wallet_auth_tokens: configured_wallet_auth_tokens, wallets: already_started_wallets}) do
-    already_started_wallet_auth_tokens = Enum.map(already_started_wallets, fn {_, wallet, _} -> wallet.auth_token end)
+  defp sync_wallet_workers(
+         state = %{
+           wallet_auth_tokens: configured_wallet_auth_tokens,
+           wallets: already_started_wallets
+         }
+       ) do
+    already_started_wallet_auth_tokens =
+      Enum.map(already_started_wallets, fn {_, wallet, _} -> wallet.auth_token end)
+
     wanted_wallet_auth_tokens = get_node_chunk(configured_wallet_auth_tokens)
+
+    if Oban.config().queues[:transactions] do
+      Oban.scale_queue(
+        queue: :transactions,
+        limit: length(wanted_wallet_auth_tokens),
+        local_only: true
+      )
+    end
 
     newly_started_wallets =
       Enum.map(wanted_wallet_auth_tokens -- already_started_wallet_auth_tokens, fn auth_token ->
@@ -113,7 +128,10 @@ defmodule Outer.Transactions.WalletManager do
   end
 
   defp make_next_pending_transaction(
-         state = %{pending_transactions: [{transaction, from} | remaining_transactions], wallets: wallets}
+         state = %{
+           pending_transactions: [{transaction, from} | remaining_transactions],
+           wallets: wallets
+         }
        ) do
     case claim_wallet(wallets) do
       {:ok, {pid, _wallet}, wallets} ->

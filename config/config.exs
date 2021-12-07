@@ -55,11 +55,9 @@ config :waffle,
 config :ex_aws,
   json_codec: Jason
 
-config :outer, Outer.Transactions,
-  wallet_auth_tokens: (1..1000 |> Enum.map(fn i -> "w#{i}" end))
+config :outer, Outer.Transactions, wallet_auth_tokens: 1..1000 |> Enum.map(fn i -> "w#{i}" end)
 
-config :outer, Oban,
-  repo: Outer.Repo
+config :outer, Oban, repo: Outer.Repo
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -9,7 +9,7 @@ defmodule Outer.Application do
   def start(_type, _args) do
     oban_config = Application.fetch_env!(:outer, Oban)
     transactions_config = Application.fetch_env!(:outer, Outer.Transactions)
-    topologies = Application.fetch_env!(:libcluster, :topologies) || []
+    topologies = Application.get_env(:libcluster, :topologies, [])
 
     children = [
       # Start the Ecto repository
@@ -20,13 +20,13 @@ defmodule Outer.Application do
       {Phoenix.PubSub, name: Outer.PubSub},
       # Start the Endpoint (http/https)
       OuterWeb.Endpoint,
+      # Start background jobs
+      {Oban, oban_config},
       # Start the Transactions system
       {DynamicSupervisor, strategy: :one_for_one, name: Outer.Transactions.WalletSupervisor},
       {Outer.Transactions.WalletManager, transactions_config},
       # Start clustering
-      {Cluster.Supervisor, [topologies, [name: Outer.ClusterSupervisor]]},
-      # Start background jobs
-      {Oban, oban_config}
+      {Cluster.Supervisor, [topologies, [name: Outer.ClusterSupervisor]]}
       # Start a worker by calling: Outer.Worker.start_link(arg)
       # {Outer.Worker, arg}
     ]

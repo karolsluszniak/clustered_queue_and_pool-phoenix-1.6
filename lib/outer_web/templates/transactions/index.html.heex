@@ -1,9 +1,13 @@
 <h1>Transactions</h1>
 
 <ul>
+  <li>Node enqueued wallets: <%= @manager_pending_transaction_count %></li>
+  <li>Node occupied wallets: <%= @occupied_wallet_count %></li>
   <li>Node wallets: <%= @node_wallet_count %></li>
-  <li>All wallets: <%= @all_wallet_count %></li>
-  <li>Wallet manager queue: <%= @manager_pending_transaction_count %></li>
+  <li>Cluster wallets: <%= @all_wallet_count %></li>
+  <li>Cluster pending transactions: <%= @queue_pending_transaction_count %></li>
+  <li>Cluster executing transactions: <%= @queue_executing_transaction_count %></li>
+  <li>Cluster completed transactions: <%= @queue_completed_transaction_count %></li>
 </ul>
 
 <h2>Enqueue</h2>

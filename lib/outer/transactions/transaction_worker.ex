@@ -8,4 +8,7 @@ defmodule Outer.Transactions.TransactionWorker do
     WalletManager.make_transaction(transaction)
     :ok
   end
+
+  @impl Oban.Worker
+  def timeout(_job), do: :timer.seconds(60)
 end
